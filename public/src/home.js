@@ -1,17 +1,9 @@
 function totalBooksCount(books) {
-   let result = books.reduce((acc, book) => {
-     acc++;
-     return acc;
-   }, 0)
-   return result;
+   return books.length;
 }
 
 function totalAccountsCount(accounts) {
-   let result = accounts.reduce((acc, account) => {
-     acc++;
-     return acc;
-   }, 0)
-   return result;
+   return accounts.length;
 }
 
 function booksBorrowedCount(books) {
@@ -28,55 +20,68 @@ function booksBorrowedCount(books) {
 }
 
 function getMostCommonGenres(books) {
-  let object = {};
   let array = [];
   const genres = books.map(book => book.genre);
-  let results = genres.reduce((acc, genre) => {
+  let result = genres.reduce((acc, genre) => {  
     if (genre in acc) {
       acc[genre]++;
     } else {
       acc[genre] = 1;
     }
-    object.name = acc[genre];
-    object.count = acc;
-    array.push(object);
+    return acc;
   }, {});
-  return array;
+  for (let item in result) {
+    let object = {};
+    object.name = item;
+    object.count = result[item];
+    if (array.length < 5) {
+      array.push(object);
+    }
+  }
+   return array.sort((genreA, genreB) => genreA.count > genreB.count ? -1 : 1);
 }
 
 
-function getMostPopularBooks(books) {
-  let object = {};
+function getMostPopularBooks(books) { 
   let array = [];
-  let result = books.forEach(book => {
-    const borrows = book.borrows;
+  books.forEach(book => {
+    let object = {};
     object.name = book.title;
-    object.count = borrows.reduce((acc, borrow) => acc++, 0);
+    const borrows = book.borrows;
+    object.count = borrows.reduce((acc, borrow) => {
+      acc++;
+      return acc;
+    }, 0)
+      array.push(object);
+  })
+  array.sort((nameA, nameB) => nameA.count > nameB.count ? -1 : 1);
+  array.length = 5;
+  return array;  
+}
+
+function getMostPopularAuthors(books, authors) {
+  let array = [];
+  const fullNames = authors.filter(author => author.name = `${author.name.first} ${author.name.last}`);
+  books.forEach(book => {
+    let object = {};
+    const borrows = book.borrows; 
+    fullNames.find(fullName => {
+      if (book.authorId === fullName.id) {
+      object.name = fullName.name;
+      }
+    })
+    object.count = borrows.reduce((acc, borrow) => {
+      if (book.authorId) {
+        acc++;
+      }
+    return acc;
+    }, 0)
     array.push(object);
   })
-  console.log(array);
+  array.sort((nameA, nameB) => nameA.count > nameB.count ? -1 : 1);
+  array.length = 5;
+  return array; 
 }
-
-
-function getMostPopularAuthors(books, authors) {}
-//   let object = {};
-//   let array = [];
-//   books.reduce((acc, book) => {
-//     const author = book.authorId;
-//     if (acc[author]) {
-//       object.name = author;
-//       object.count = acc++;
-//     } else {
-//       object.name = author;
-//       object.count = 1;
-//      }
-//     if (author === authors.id)
-//     if (array.length < 5) {
-//     array.push(object);
-//     }
-//   })
-//   return array;
-// }
 
 module.exports = {
   totalBooksCount,
